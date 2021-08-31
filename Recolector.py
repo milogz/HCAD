@@ -4,7 +4,6 @@ Created on Mon Aug 30 01:59:13 2021
 
 @author: JOSE
 """
-
 import os
 import re
 import ssl
@@ -76,7 +75,7 @@ def clonacion(estudiantes: list):
 
 
 def pulling(estudiantes: list):
-    rango = range(1,44)
+    rango = range(45)
     for num in rango:
         cc = direccion
         cc += "/MIIA_estudiante_" + str(num)
