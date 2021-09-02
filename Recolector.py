@@ -18,6 +18,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 import git
+import traceback
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
@@ -38,31 +39,43 @@ chrome_options.add_experimental_option("prefs", {
   })
 
 URL = zip(estudiantes['Usuario de GitHub'], estudiantes['Número X asignado'])
-driver = webdriver.Chrome(ChromeDriverManager().install())
 
 estudiantes_correctos = list()
+estudiantes_incorrectos = list()
 
 for estudiante in URL:
     nombre = str(estudiante[0]) 
     numero = str(estudiante[1]) 
     try:
         webpage = r'https://github.com/' + nombre + '/MIIA_estudiante_' + numero
+        driver = webdriver.Chrome(ChromeDriverManager().install())
+        print(webpage)
         driver.get(webpage)
+        validar = int(numero)
+        if validar <= 3:
+            entrada = input("Está todo bien??")
+            if entrada == "1":
+                print("Continue")
+            else: break
         try:
             error = driver.find_element_by_xpath('/html/body/div[4]/main/div[1]/div[2]/img[2]')
         except:
-            estudiantes_correctos.append(webpage + '.git')
+            estudiantes_correctos.append(webpage + '.git')  
     except:
-        print("El estudiante " + nombre + " no creó bien el repo.")
+        traceback.print_exc()
+        print("No se recuperó el link del estudiante " + nombre)
         continue
     try:
         screenname = driver.find_element_by_xpath("//a[@title='Talleres']")
         screenname = driver.find_element_by_xpath("//a[@title='Laboratorios']")
     except:
         print("El estudiante " + nombre + " no creó bien el repo.")
+        estudiantes_incorrectos.append(nombre)
         continue
     driver.close()
-        
+
+for malo in estudiantes_incorrectos:
+    print(malo)        
 deseo = input('Marque 1 si quiere clonar los repos y 2 si quiere actualizarlos:  ') 
 direccion = input('Ingrese la ruta en donde quiere guardar los repos:  ')   
 
